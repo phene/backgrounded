@@ -7,7 +7,7 @@ Object.send(:include, Backgrounded::ClassMethods)
 
 module Backgrounded
   class << self
-    attr_accessor :logger, :handler
+    attr_accessor :logger, :handler, :default_handler
   end
   
   def self.run_immediately
@@ -20,7 +20,8 @@ module Backgrounded
 end
 
 # default handler to the basic in process handler
-Backgrounded.handler = Backgrounded::Handler::InprocessHandler.new
+Backgrounded.default_handler = Backgrounded::Handler::InprocessHandler.new
+Backgrounded.handler = Backgrounded.default_handler
 
 # configure default logger to standard out with info log level
 Backgrounded.logger = Logger.new STDOUT

@@ -56,6 +56,12 @@ class BackgroundedTest < Test::Unit::TestCase
       end
     end
   end
+  
+  class DoNothingHandler
+    def request(object, method, *args)
+      # Do nothing
+    end
+  end
 
   context 'an object with a single backgrounded method' do
     setup do
@@ -78,6 +84,24 @@ class BackgroundedTest < Test::Unit::TestCase
       should "execute method in background" do end #see expectations
       should 'return nil for backgrounded method' do
         assert_nil @result
+      end
+    end
+    context "and a handler that does not execute immediately" do
+      setup do
+        Backgrounded.handler = DoNothingHandler.new
+      end
+      teardown do
+        Backgrounded.handler = Backgrounded.default_handler
+      end
+      
+      context "and running the backgrounded method in a run_immediately block" do
+        setup do
+          @user.expects(:do_stuff).returns(true)
+          Backgrounded.run_immediately do
+            @user.do_stuff_backgrounded
+          end
+        end
+        should "execute method immediately" do end #see expectations
       end
     end
   end
@@ -132,6 +156,7 @@ class BackgroundedTest < Test::Unit::TestCase
       assert_equal({:priority => :low}, @dog.bark_backgrounded_options)
     end
   end
+
 
   context 'a class with backgrounded method' do
     should 'define backgrounded method' do

@@ -157,7 +157,6 @@ class BackgroundedTest < Test::Unit::TestCase
     end
   end
 
-
   context 'a class with backgrounded method' do
     should 'define backgrounded method' do
       assert Blog.respond_to?('update_info_backgrounded')
